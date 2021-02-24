@@ -1,6 +1,7 @@
 from os import path, listdir
 import pandas as pd
 import numpy as np
+from datetime import datetime, timedelta
 
 
 def results_files(dir):
@@ -12,12 +13,15 @@ def results_files(dir):
     return out_files
 
 
-def read_file(file):
+def simstrat_time_to_datetime(days, reference_date):
+    return reference_date + timedelta(days=days)
+
+
+def read_file(file, reference_date):
     df = pd.read_csv(file)
-    depths = list(df.columns)
-    del depths[0]
-    depths = np.array(depths).astype(float)
-    times = np.array(df.iloc[:, 0])
+    df["time"] = df.iloc[:, 0].apply(lambda x: simstrat_time_to_datetime(x, reference_date))
+    df = df.set_index('time', drop=True)
     df = df.drop(df.columns[0], axis=1)
-    data = df.values.transpose()
-    return {"depths": depths, "times": times, "data": data}
+    start = min(df.index)
+    end = max(df.index)
+    return start, end, df
