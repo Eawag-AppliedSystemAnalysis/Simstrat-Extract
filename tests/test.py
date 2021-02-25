@@ -8,8 +8,8 @@ for file in files:
         simulations.append(os.path.join(folder, file))
 params = ["T"]
 
-#simulations = ["D:\Eawag\Simstrat\git\Simstrat-Operational\Simulation\Soppensee"]
+#simulations = ["/media/jamesrunnalls/JamesSSD/Eawag/Simstrat/git/Simstrat-Operational/Simulation/Soppensee","/media/jamesrunnalls/JamesSSD/Eawag/Simstrat/git/Simstrat-Operational/Simulation/LakeGeneva"]
 
 se = SimstratExtract()
 se.read_dirs(simulations, params)
-se.extract_surface_parameter("T", "../data/surface_temperature")
+se.extract_surface_parameter("T", "../data/test")

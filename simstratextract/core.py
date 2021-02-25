@@ -4,7 +4,7 @@ from os import path, listdir
 from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
-import json
+import simplejson as json
 
 
 class SimstratExtract:
@@ -117,4 +117,4 @@ class SimstratExtract:
 
             outfile = path.join(out_folder, param + "_" + str(year) + ".json")
             with open(outfile, 'w') as f:
-                json.dump(out, f)
+                json.dump(out, f, ignore_nan=True)
