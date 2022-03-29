@@ -11,8 +11,8 @@ class SimstratExtract:
     def __init__(self):
         self.data = {}
         self.reference_date = datetime(1981, 1, 1)
-        self.min_date = datetime.now()
-        self.max_date = self.reference_date
+        self.max_date = datetime.now()
+        self.min_date = self.reference_date
         self.parameter_dict = {"Amsoldingersee": 36,
                                "Daubensee": 47,
                                "Greifensee": 3,
@@ -90,7 +90,7 @@ class SimstratExtract:
                     self.min_date = min(self.min_date, start)
                     self.max_date = max(self.max_date, end)
 
-    def extract_surface_parameter(self, param, out_folder, round=2):
+    def extract_parameter(self, param, out_folder, round=2):
         delta = self.max_date - self.min_date
         base = self.min_date.replace(hour=0, minute=0, second=0, microsecond=0)
         arr = np.array([base + timedelta(days=i) for i in range(delta.days)])
@@ -99,22 +99,26 @@ class SimstratExtract:
         df = df.set_index("time", drop=True)
         for key in self.data:
             if param in self.data[key]:
-                df_data = self.data[key][param].resample('D').mean().iloc[:, -1:]
-                df_data.columns = [key]
-                df_data[key] = df_data[key].round(round)
+                df_data = self.data[key][param].resample('D').mean().iloc[:, [1, -1]]
+                df_data.columns = [key + "_bottom", key + "_surface"]
+                df_data[key + "_bottom"] = df_data[key + "_bottom"].round(round)
+                df_data[key + "_surface"] = df_data[key + "_surface"].round(round)
                 df = df.merge(df_data, left_index=True, right_index=True, how="left")
         columns = df.columns
         df["unix"] = df.index.astype(int) / 10**9
-
         start_year = self.min_date.year
         end_year = self.max_date.year
         for year in range(start_year, end_year + 1):
             df_year = df.loc[datetime(year, 1, 1):datetime(year, 12, 31)]
             out = {"time": list(df_year["unix"])}
             for col in columns:
+                arr = col.split("_")
                 if not df_year[col].isnull().all():
-                    out[self.parameter_dict[col]] = list(df_year[col])
-
+                    if self.parameter_dict[arr[0]] not in out:
+                        out[self.parameter_dict[arr[0]]] = {}
+                    out[self.parameter_dict[arr[0]]][arr[1]] = list(df_year[col])
             outfile = path.join(out_folder, param + "_" + str(year) + ".json")
             with open(outfile, 'w') as f:
                 json.dump(out, f, ignore_nan=True)
+
+
