@@ -118,7 +118,7 @@ class SimstratExtract:
             for col in columns:
                 arr = col.split("_")
                 if not df_year[col].isnull().all():
-		    if arr[0] in self.parameter_dict:
+                    if arr[0] in self.parameter_dict:
                         if self.parameter_dict[arr[0]] not in out:
                             out[self.parameter_dict[arr[0]]] = {}
                         out[self.parameter_dict[arr[0]]][arr[1]] = list(df_year[col])
