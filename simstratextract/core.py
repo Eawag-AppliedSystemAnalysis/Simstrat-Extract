@@ -119,9 +119,9 @@ class SimstratExtract:
                 arr = col.split("_")
                 if not df_year[col].isnull().all():
 		    if arr[0] in self.parameter_dict:
-                    	if self.parameter_dict[arr[0]] not in out:
-                        	out[self.parameter_dict[arr[0]]] = {}
-                    	out[self.parameter_dict[arr[0]]][arr[1]] = list(df_year[col])
+                        if self.parameter_dict[arr[0]] not in out:
+                            out[self.parameter_dict[arr[0]]] = {}
+                        out[self.parameter_dict[arr[0]]][arr[1]] = list(df_year[col])
             outfile = path.join(out_folder, param + "_" + str(year) + "0101_" + str(min(int(str(year) + "1231"), int(end.strftime("%Y%m%d")))) + ".json")
             with open(outfile, 'w') as f:
                 json.dump(out, f, ignore_nan=True)
