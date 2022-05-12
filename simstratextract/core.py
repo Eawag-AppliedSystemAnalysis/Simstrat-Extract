@@ -104,10 +104,14 @@ class SimstratExtract:
                 df_data[key + "_bottom"] = df_data[key + "_bottom"].round(round)
                 df_data[key + "_surface"] = df_data[key + "_surface"].round(round)
                 df = df.merge(df_data, left_index=True, right_index=True, how="left")
+
+        df = df.dropna(how='all')
         columns = df.columns
         df["unix"] = df.index.astype(int) / 10**9
         start_year = self.min_date.year
-        end_year = self.max_date.year
+        end = datetime.fromtimestamp(df["unix"].max())
+        end_year = end.year
+
         for year in range(start_year, end_year + 1):
             df_year = df.loc[datetime(year, 1, 1):datetime(year, 12, 31)]
             out = {"time": list(df_year["unix"])}
@@ -117,8 +121,7 @@ class SimstratExtract:
                     if self.parameter_dict[arr[0]] not in out:
                         out[self.parameter_dict[arr[0]]] = {}
                     out[self.parameter_dict[arr[0]]][arr[1]] = list(df_year[col])
-            outfile = path.join(out_folder, param + "_" + str(year) + ".json")
+            outfile = path.join(out_folder, param + "_" + str(year) + "0101_" + str(min(int(str(year) + "1231"), int(end.strftime("%Y%m%d")))) + ".json")
             with open(outfile, 'w') as f:
                 json.dump(out, f, ignore_nan=True)
-
 
