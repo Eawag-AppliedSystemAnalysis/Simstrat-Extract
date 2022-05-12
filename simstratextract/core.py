@@ -67,6 +67,13 @@ class SimstratExtract:
                                "UpperLakeZurich": 4,
                                "Wagitalersee": 43,
                                "Walensee": 35,
+                               "Husemersee": 152,
+                               "Huttnersee": 145,
+                               "Lutzelsee": 57,
+                               "Mettmenhaslisee": 148,
+                               "Egelsee": 147,
+                               "UntererChatzensee": 150,
+                               "Seeweidsee": 154,
                                }
         print("Initialised Simstrat Extract Object")
 
